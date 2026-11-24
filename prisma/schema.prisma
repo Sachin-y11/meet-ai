@@ -24,6 +24,7 @@ model User {
   sessions         Session[]
   accounts         Account[]
   twofactors       TwoFactor[]
+  agents           Agents[]
 
   @@unique([email])
   @@map("user")
@@ -112,4 +113,17 @@ model Jwks {
   crv        String?
 
   @@map("jwks")
+}
+
+model Agents {
+  id     String @id @default(cuid())
+  name   String
+  userId String
+
+  instructions String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
