@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { TRPCReactProvider } from "@/trpc/client";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -36,8 +37,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className='size-full flex flex-col'>
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster richColors closeButton />
+        <TRPCReactProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster richColors closeButton />
+        </TRPCReactProvider>
       </body>
     </html>
   );
