@@ -1,4 +1,4 @@
-import ErrorState from "@/components/error-state";
+import { loadAgentFilterParam } from "@/modules/agents/params";
 import AgentListHeader from "@/modules/agents/ui/components/agent-list-header";
 import AgentsView, {
   AgentsViewError,
@@ -6,12 +6,19 @@ import AgentsView, {
 } from "@/modules/agents/ui/views/agents-view";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { connection } from "next/server";
+import type { SearchParams } from "nuqs";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-async function AgentsPageContent() {
+interface Props {
+  searchParams: Promise<SearchParams>;
+}
+
+async function AgentsPageContent({ searchParams }: Props) {
   await connection();
-  prefetch(trpc.agents.getMany.queryOptions());
+  const agentFilter = await loadAgentFilterParam(searchParams);
+
+  prefetch(trpc.agents.getMany.queryOptions({ ...agentFilter }));
 
   return (
     <>
@@ -23,11 +30,11 @@ async function AgentsPageContent() {
   );
 }
 
-export default function page() {
+export default function page({ searchParams }: Props) {
   return (
     <ErrorBoundary fallback={<AgentsViewError />}>
       <Suspense fallback={<AgentsViewLoading />}>
-        <AgentsPageContent />
+        <AgentsPageContent searchParams={searchParams} />
       </Suspense>
     </ErrorBoundary>
   );
