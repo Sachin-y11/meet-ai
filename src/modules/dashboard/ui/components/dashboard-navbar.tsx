@@ -28,7 +28,7 @@ export default function DashboardNavbar() {
   return (
     <>
       <DashboardCommand open={open} setOpen={setOpen} />
-      <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4'>
+      <header className='sticky top-0 bg-background flex h-16 shrink-0 items-center gap-2 border-b px-4'>
         <SidebarTrigger className='-ml-1' />
 
         <Button
