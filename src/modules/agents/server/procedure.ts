@@ -107,4 +107,22 @@ export const agentRouter = createTRPCRouter({
         });
       }
     }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await prisma.agents.deleteMany({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+      });
+
+      if (result.count === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Agent not found.",
+        });
+      }
+    }),
 });

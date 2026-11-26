@@ -48,6 +48,11 @@ const AgentForm = ({ initialValues, onCancel, onSuccess }: Props) => {
     await queryClient.invalidateQueries({
       queryKey: trpc.agents.getMany.queryKey(),
     });
+    if (initialValues?.id) {
+      await queryClient.invalidateQueries({
+        queryKey: trpc.agents.getOne.queryKey({ id: initialValues.id }),
+      });
+    }
     toast.success(isEdit ? "Agent updated." : "Agent created.");
     onSuccess?.();
   };
