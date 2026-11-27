@@ -7,6 +7,8 @@ import {
 import prisma from "@/lib/prisma";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import z from "zod";
+import { meetingInsertSchema, meetingUpdateSchema } from "../schema";
+import { TRPCError } from "@trpc/server";
 
 export const meetingRouter = createTRPCRouter({
   getOne: protectedProcedure
@@ -71,5 +73,42 @@ export const meetingRouter = createTRPCRouter({
         pageSize,
         totalPages: Math.ceil(total / pageSize),
       };
+    }),
+
+  create: protectedProcedure
+    .input(meetingInsertSchema)
+    .mutation(async ({ ctx, input }) => {
+      const createMeeting = await prisma.meetings.create({
+        data: {
+          ...input,
+          userId: ctx.auth.user.id,
+          status: "upcoming",
+          transcriptUrl: null,
+          recordingUrl: null,
+          summary: null,
+        },
+      });
+
+      return createMeeting;
+    }),
+
+  update: protectedProcedure
+    .input(meetingUpdateSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+      const result = await prisma.meetings.updateMany({
+        where: {
+          id,
+          userId: ctx.auth.user.id,
+        },
+        data,
+      });
+
+      if (result.count === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Meeting not found.",
+        });
+      }
     }),
 });
