@@ -1,3 +1,4 @@
+import MeetingListheader from "@/modules/meetings/ui/components/meeting-list-header";
 import MeetingsView, {
   MeetingsViewError,
   MeetingsViewLoading,
@@ -14,7 +15,7 @@ async function AgentsPageContent() {
 
   return (
     <>
-      {/* <AgentListHeader /> */}
+      <MeetingListheader />
       <HydrateClient>
         <MeetingsView />
       </HydrateClient>

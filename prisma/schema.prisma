@@ -143,16 +143,16 @@ model Meetings {
   name          String
   userId        String
   agentId       String
-  transcriptUrl String
-  recordingUrl  String
-  summary       String
+  transcriptUrl String?
+  recordingUrl  String?
+  summary       String?
   status        MeetingStatus
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   agent Agents @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
-  startedAt DateTime
-  endeddAt  DateTime
+  startedAt DateTime?
+  endedAt   DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
