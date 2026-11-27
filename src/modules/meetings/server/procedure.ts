@@ -19,9 +19,25 @@ export const meetingRouter = createTRPCRouter({
           id: input.id,
           userId: ctx.auth.user.id,
         },
+        include: {
+          agent: true,
+          user: true,
+        },
       });
 
-      return getOneMeeting;
+      const { startedAt, endedAt } = getOneMeeting;
+      const duration =
+        startedAt && endedAt
+          ? Math.max(
+              0,
+              Math.round((endedAt.getTime() - startedAt.getTime()) / 1000),
+            )
+          : null;
+
+      return {
+        ...getOneMeeting,
+        duration,
+      };
     }),
 
   getMany: protectedProcedure
@@ -62,6 +78,9 @@ export const meetingRouter = createTRPCRouter({
           skip: (page - 1) * pageSize,
           take: pageSize,
           orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          include: {
+            agent: true,
+          },
         }),
         prisma.meetings.count({ where }),
       ]);
