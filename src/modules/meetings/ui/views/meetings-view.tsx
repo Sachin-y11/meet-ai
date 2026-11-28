@@ -25,7 +25,11 @@ export default function MeetingsView() {
 
   return (
     <div>
-      <DataTable data={data.data} columns={columns} />
+      <DataTable
+        data={data.data}
+        columns={columns}
+        onRowClick={(row) => router.push(`/meetings/${row.id}`)}
+      />
       <DataPagination
         page={filters.page}
         totalPages={data.totalPages}

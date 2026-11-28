@@ -1,5 +1,5 @@
 import ResponsiveDialog from "@/components/responsive-dialog";
-import AgentForm from "./agent-form";
+import MeetingForm from "@/modules/meetings/ui/components/meeting-form";
 
 type Props = {
   open: boolean;
@@ -14,7 +14,7 @@ export default function NewAgentDialog({ onOpenChange, open }: Props) {
       open={open}
       onOpenChange={onOpenChange}
     >
-      <AgentForm
+      <MeetingForm
         onSuccess={() => onOpenChange(false)}
         onCancel={() => onOpenChange(false)}
       />
