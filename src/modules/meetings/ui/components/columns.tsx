@@ -13,7 +13,7 @@ import {
   LoaderIcon,
   VideoIcon,
 } from "lucide-react";
-import { MeetingGetOne } from "../../types";
+import type { MeetingGetMany } from "../../types";
 import { type DataTableFeatures } from "./data-table-features";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "cn";
@@ -43,7 +43,10 @@ const statusColorMap = {
 };
 
 // Use `accessor` for data columns and `display` for columns without one.
-const columnHelper = createColumnHelper<DataTableFeatures, MeetingGetOne>();
+const columnHelper = createColumnHelper<
+  DataTableFeatures,
+  MeetingGetMany["data"][number]
+>();
 
 export const columns = columnHelper.columns([
   columnHelper.accessor("name", {
