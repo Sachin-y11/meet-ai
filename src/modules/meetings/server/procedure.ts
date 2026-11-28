@@ -7,8 +7,20 @@ import {
 import prisma from "@/lib/prisma";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import z from "zod";
-import { meetingInsertSchema, meetingUpdateSchema } from "../schema";
+import {
+  meetingInsertSchema,
+  meetingStatusSchema,
+  meetingUpdateSchema,
+} from "../schema";
 import { TRPCError } from "@trpc/server";
+
+const getDuration = (startedAt: Date | null, endedAt: Date | null) =>
+  startedAt && endedAt
+    ? Math.max(
+        0,
+        Math.round((endedAt.getTime() - startedAt.getTime()) / 1000),
+      )
+    : null;
 
 export const meetingRouter = createTRPCRouter({
   getOne: protectedProcedure
@@ -25,18 +37,9 @@ export const meetingRouter = createTRPCRouter({
         },
       });
 
-      const { startedAt, endedAt } = getOneMeeting;
-      const duration =
-        startedAt && endedAt
-          ? Math.max(
-              0,
-              Math.round((endedAt.getTime() - startedAt.getTime()) / 1000),
-            )
-          : null;
-
       return {
         ...getOneMeeting,
-        duration,
+        duration: getDuration(getOneMeeting.startedAt, getOneMeeting.endedAt),
       };
     }),
 
@@ -52,6 +55,8 @@ export const meetingRouter = createTRPCRouter({
             .max(MAX_PAGE_SIZE)
             .default(DEFAULT_PAGE_SIZE),
           search: z.string().nullish(),
+          agentId: z.string().nullish(),
+          status: meetingStatusSchema.nullish(),
         })
         .optional(),
     )
@@ -70,9 +75,11 @@ export const meetingRouter = createTRPCRouter({
               },
             }
           : {}),
+        ...(input?.status ? { status: input.status } : {}),
+        ...(input?.agentId ? { agentId: input.agentId } : {}),
       };
 
-      const [data, total] = await Promise.all([
+      const [meetings, total] = await Promise.all([
         prisma.meetings.findMany({
           where,
           skip: (page - 1) * pageSize,
@@ -84,6 +91,11 @@ export const meetingRouter = createTRPCRouter({
         }),
         prisma.meetings.count({ where }),
       ]);
+
+      const data = meetings.map((meeting) => ({
+        ...meeting,
+        duration: getDuration(meeting.startedAt, meeting.endedAt),
+      }));
 
       return {
         data,
