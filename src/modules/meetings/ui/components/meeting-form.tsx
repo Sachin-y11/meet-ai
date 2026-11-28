@@ -22,7 +22,7 @@ import { useTRPC } from "@/trpc/client";
 import { useState } from "react";
 import CommandSelect from "./command-select";
 import GenerateAvatar from "@/components/generate-avatar";
-import NewAgentDialog from "@/modules/agents/ui/components/new-agent-dialog";
+import NewMeetingDialog from "./new-meeting-dialog";
 
 type Props = {
   onSuccess?: (id?: string) => void;
@@ -37,7 +37,7 @@ const MeetingForm = ({ initialValues, onCancel, onSuccess }: Props) => {
   const queryClient = useQueryClient();
   const isEdit = Boolean(initialValues?.id);
 
-  const [openNewAgentDialog, setOpenNewAgentDialog] = useState(false);
+  const [openNewMeetingDialog, setOpenNewMeetingDialog] = useState(false);
   const [agentSearch, setAgentSearch] = useState("");
 
   const agents = useQuery(
@@ -94,9 +94,9 @@ const MeetingForm = ({ initialValues, onCancel, onSuccess }: Props) => {
 
   return (
     <>
-      <NewAgentDialog
-        open={openNewAgentDialog}
-        onOpenChange={setOpenNewAgentDialog}
+      <NewMeetingDialog
+        open={openNewMeetingDialog}
+        onOpenChange={setOpenNewMeetingDialog}
       />
       <form
         onSubmit={form.handleSubmit(onSubmit)}
@@ -155,9 +155,9 @@ const MeetingForm = ({ initialValues, onCancel, onSuccess }: Props) => {
                   <button
                     type='button'
                     className='text-primary hover:underline'
-                    onClick={() => setOpenNewAgentDialog(true)}
+                    onClick={() => setOpenNewMeetingDialog(true)}
                   >
-                    Create new agent
+                    Create new Meeting
                   </button>
                 </FieldDescription>
                 {fieldState.invalid && (

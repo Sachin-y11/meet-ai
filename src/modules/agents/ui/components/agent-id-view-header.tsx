@@ -48,7 +48,7 @@ export default function AgentIdViewHeader({
           </BreadcrumbSeparator>
           <BreadcrumbLink
             className='font-medium text-md'
-            render={<Link href={`/agents/${agentName}`}>{agentName}</Link>}
+            render={<Link href={`/agents/${agentId}`}>{agentName}</Link>}
           />
         </BreadcrumbList>
       </Breadcrumb>
